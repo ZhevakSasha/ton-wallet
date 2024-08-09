@@ -13,6 +13,16 @@ export default class AuthService {
     }
   }
 
+  async logout(userId: number): Promise<boolean> {
+    try {
+      const response = await axios.post(`${BASE_URL}/users/logout?id=${userId}`)
+      return response.data
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
+  }
+
   async checkUserExists(userId: number): Promise<boolean> {
     try {
       const response = await axios.get(`${BASE_URL}/users/exists?id=${userId}`)

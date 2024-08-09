@@ -1,7 +1,17 @@
 <template>
   <div v-if="jettons != undefined" class="wallet">
-    <div class="info">
+    <header>
       <h2>Welcome, {{ user?.username }}</h2>
+      <div class="settings-wrapper">
+        <div class="settings-icon" @click="toggleMenu">
+          <img src="@/assets/settings-svgrepo-com.svg" alt="Settings" />
+        </div>
+        <div v-if="isMenuOpen" class="dropdown-menu">
+          <button class="dropdown-item" @click="disconnect">Disconnect Wallet</button>
+        </div>
+      </div>
+    </header>
+    <div class="info">
       <p>Your balance is:</p>
       <h1>${{ balance }}</h1>
       <div class="address" @click="copyAddress(user?.rawWalletAddress)">
@@ -40,7 +50,6 @@
           </div>
           <div class="jetton-balance">
             <span class="bold">{{ formatBalance(jetton) }}</span>
-
             <span class="gray-small"> $ {{ calculateJettonBalance(jetton) }} </span>
           </div>
         </li>
@@ -73,6 +82,7 @@ const jettons = ref<Balance[]>([])
 const hideZeroBalance = ref<boolean>(false)
 const sortBy = ref<string>('name')
 const balance = ref<number>(0)
+const isMenuOpen = ref<boolean>(false)
 
 const formatAddress = (address: string | undefined) => {
   if (!address) return ''
@@ -176,6 +186,17 @@ const filteredJettons = computed(() => {
   return filtered
 })
 
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value
+}
+
+const disconnect = async () => {
+  if (userId) {
+    await tonConnectStore.disconnect(parseFloat(userId))
+    router.push({ name: 'welcome' })
+  }
+}
+
 onMounted(async () => {
   user.value = await authService.getUserById(Number(userId))
   if (user.value) {
@@ -216,84 +237,58 @@ h1 {
   height: 100%;
   color: #fff;
   font-size: 16px;
+  position: relative;
 }
 
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  padding: 12px 12px 0px 12px;
 }
 
-.address {
-  cursor: default;
-  transition: color 0.2s;
+.settings-wrapper {
+  position: relative;
 }
 
-.address:active {
-  color: rgb(63, 62, 155);
-}
-
-.balance {
-  text-align: right;
-}
-
-.actions {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.actions button {
-  background-color: #2e2e3e;
-  border: none;
-  color: #fff;
-  padding: 10px;
-  border-radius: 5px;
+.settings-icon {
   cursor: pointer;
-}
-
-.bonuses {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.jettons-list {
-  list-style-type: none;
-  padding: 0.5rem 0.5rem;
-}
-
-.jetton-balance {
-  display: flex;
-  flex-direction: column;
-}
-
-.jetton-item {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
-  background-color: #1d2633;
-  padding: 5px 10px 5px 10px;
+}
+
+.settings-icon img {
+  width: 24px;
+  height: 24px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background-color: #d42230;
   border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  min-width: 150px;
 }
 
-.jetton-icon {
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 50%;
+.dropdown-item {
+  padding: 10px 10px;
+  width: 100%;
+  border: none;
+  background: none;
+  color: #d1d4dc;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.jetton-info {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-.jetton-balance {
-  align-items: right;
-  text-align: right;
+.info {
+  padding: 12px;
+  justify-content: space-between;
+  text-align: center;
+  align-items: center;
 }
 
 .filters {
@@ -362,7 +357,6 @@ header {
 .sort-select option {
   background-color: #2a3240;
   color: #d1d4dc;
-
   border-radius: 5px;
 }
 
@@ -373,5 +367,47 @@ header {
   pointer-events: none;
   color: #d1d4dc;
   font-size: 10px;
+}
+
+.jettons-list {
+  list-style-type: none;
+  padding: 0.5rem 0.5rem;
+}
+
+.jetton-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  background-color: #1d2633;
+  padding: 5px 10px;
+  border-radius: 8px;
+}
+
+.jetton-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  border-radius: 50%;
+}
+
+.jetton-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.jetton-balance {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.address {
+  cursor: default;
+  transition: color 0.2s;
+}
+
+.address:active {
+  color: rgb(63, 62, 155);
 }
 </style>
