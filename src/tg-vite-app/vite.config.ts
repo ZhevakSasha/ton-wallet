@@ -33,6 +33,12 @@ export default defineConfig({
       key,
       cert
     },
-    port: 4444
+    port: 4444,
+    proxy: {
+      '/api': {
+        target: 'https://localhost:7206', // Целевой сервер
+        secure: false
+      }
+    }
   }
 })

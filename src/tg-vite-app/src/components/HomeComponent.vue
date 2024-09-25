@@ -1,6 +1,6 @@
 <template>
   <div v-if="jettons != undefined" class="wallet">
-    <header>
+    <div class="header">
       <h2>Welcome, {{ user?.username }}</h2>
       <div class="settings-wrapper">
         <div class="settings-icon" @click="toggleMenu">
@@ -10,12 +10,11 @@
           <button class="dropdown-item" @click="disconnect">Disconnect Wallet</button>
         </div>
       </div>
-    </header>
+    </div>
     <div class="info">
-      <p>Your balance is:</p>
-      <h1>${{ balance }}</h1>
-      <div class="address" @click="copyAddress(user?.rawWalletAddress)">
-        {{ formatAddress(user?.rawWalletAddress) }}
+      <div class="balance">${{ balance }}</div>
+      <div class="address" @click="copyAddress(user?.walletAddress)">
+        {{ formatAddress(user?.walletAddress) }}
       </div>
     </div>
     <div class="filters">
@@ -88,7 +87,7 @@ const formatAddress = (address: string | undefined) => {
   if (!address) return ''
   const start = address.slice(0, 4)
   const end = address.slice(-4)
-  return `${start}...${end}`
+  return `${start}....${end}`
 }
 
 const animateBalance = (target: number) => {
@@ -217,10 +216,11 @@ onMounted(async () => {
   opacity: 0;
 }
 
-h1 {
+.balance {
   font-weight: 550;
-  font-size: 2.2rem;
+  font-size: 2.3rem;
   position: relative;
+  line-height: 1;
 }
 
 .info {
@@ -240,11 +240,16 @@ h1 {
   position: relative;
 }
 
-header {
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12px 12px 0px 12px;
+  text-align: center;
+}
+
+.header h2 {
+  flex-grow: 1;
 }
 
 .settings-wrapper {
@@ -405,6 +410,9 @@ header {
 .address {
   cursor: default;
   transition: color 0.2s;
+  color: #a9bcd4;
+  font-size: 14px;
+  display: inline-block;
 }
 
 .address:active {

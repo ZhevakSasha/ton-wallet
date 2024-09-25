@@ -1,7 +1,7 @@
 import axios from 'axios'
 import type { Balance, Point, TransactionHistory } from './types'
 
-const BASE_URL = 'https://localhost:7206/api/users'
+const BASE_URL = '/api/users'
 
 export default class TonService {
   async getJettons(userId: number): Promise<Balance[]> {

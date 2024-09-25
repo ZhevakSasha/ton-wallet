@@ -15,7 +15,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@tonconnect/sdk": "^3.0.3",
+    "@tonconnect/sdk": "^3.0.5",
     "@tonconnect/ui": "^2.0.6",
     "@types/chart.js": "^2.9.41",
     "axios": "^1.7.2",

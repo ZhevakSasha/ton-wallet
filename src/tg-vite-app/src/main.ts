@@ -12,11 +12,4 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 
-const tonConnectStore = useTonConnectStore()
-
-async function initializeApp() {
-  await tonConnectStore.initializeTonConnectUI()
-  app.mount('#app')
-}
-
-initializeApp()
+app.mount('#app')

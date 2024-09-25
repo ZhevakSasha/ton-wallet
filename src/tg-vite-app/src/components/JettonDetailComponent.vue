@@ -1,8 +1,10 @@
 <template>
   <div v-if="jetton" class="wallet-container">
     <div class="top-bar">
-      <button @click="goBack" class="back-button">🢀</button>
-      <h1 class="title">{{ jetton?.jetton.name }}</h1>
+      <div @click="goBack" class="back-button">
+        <img src="@/assets/arrow-left-alt-svgrepo-com.svg" />
+      </div>
+      <p class="title">{{ jetton?.jetton.name }}</p>
     </div>
 
     <div class="header">
@@ -17,7 +19,7 @@
     </div>
 
     <div v-if="selectedPoint !== null" class="price-info">
-      <h3>${{ selectedPoint.value.toFixed(4) }}</h3>
+      <h4>$ {{ selectedPoint.value.toFixed(4) }}</h4>
       <p :class="getColorClass(percentageChange.toFixed(2))">{{ percentageChange.toFixed(2) }} %</p>
       <span v-if="!isTouched" class="gray-small"> Price </span>
       <span v-else class="gray-small"> {{ getDate(selectedPoint.utime.toString()) }} </span>
@@ -27,10 +29,8 @@
       class="chart"
       @mousedown="handleStart"
       @mouseup="handleEnd"
-      @mousemove="handleMove"
       @touchstart="handleStart"
       @touchend="handleEnd"
-      @touchmove="handleMove"
     >
       <JettonChart
         :points="points"
@@ -52,11 +52,12 @@
         <ul class="history-list">
           <li v-for="history in jettonHistory" :key="history.utime" class="history-item">
             <div class="left-info">
+              <img :src="getImageSrc(history.transactionType)" />
               <span class="bold"> {{ history.transactionType }} </span>
             </div>
             <div class="right-info">
-              <span class="bold">
-                {{ formatBalance(history.value.toString(), jetton.jetton.decimals) }}
+              <span>
+                {{ formatBalance(history.value.toString(), jetton.jetton.decimals).toFixed(2) }}
                 {{ jetton.jetton.symbol }}</span
               >
               <span class="gray-small"> {{ getDate(history.utime) }} </span>
@@ -74,7 +75,12 @@ import { TonConnectUI } from '@tonconnect/ui'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AuthService, { UserDto } from '@/services/AuthService'
-import type { Balance, Point, TransactionHistory } from '@/services/types'
+import {
+  TransactionType,
+  type Balance,
+  type Point,
+  type TransactionHistory
+} from '@/services/types'
 import TonService from '@/services/TonService'
 import { useJettonStore } from '@/stores/jettonStore'
 import JettonChart from '@/components/JettonChart.vue'
@@ -94,6 +100,17 @@ const percentageChange = ref(0)
 const selectedPoint = ref<Point | null>(null)
 
 const isTouched = ref(false)
+
+const getImageSrc = (transactionType: string) => {
+  switch (transactionType) {
+    case TransactionType.Received:
+      return 'src/assets/arrow-bottom-svgrepo-com.svg'
+    case TransactionType.Sent:
+      return 'src/assets/arrow-top-svgrepo-com.svg'
+    case TransactionType.Exchange:
+      return 'src/assets/arrow-up-arrow-down-svgrepo-com.svg'
+  }
+}
 
 const handleStart = () => {
   isTouched.value = true
@@ -164,7 +181,7 @@ const calculatePercentageChange = (points: Point[]) => {
 }
 
 const formatBalance = (balance: string, decimals: number) => {
-  return (parseFloat(balance) / Math.pow(10, decimals)).toFixed(2)
+  return parseFloat(balance) / Math.pow(10, decimals)
 }
 
 const calculateJettonBalance = (balance: Balance) => {
@@ -257,7 +274,7 @@ onMounted(async () => {
 
 .top-bar {
   display: flex;
-  padding: 6px 12px 6px 12px;
+  padding: 8px 12px 10px 12px;
   align-items: center;
   margin-bottom: 10px;
   position: sticky;
@@ -272,12 +289,14 @@ onMounted(async () => {
   left: 0;
   width: 100%;
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(58, 53, 53, 0.1);
 }
 
 .back-button {
+  display: flex;
   background: none;
   border: none;
+  align-items: center;
   color: white;
   font-size: 20px;
   position: absolute;
@@ -286,6 +305,11 @@ onMounted(async () => {
 
 .title {
   margin: 0 auto;
+}
+
+.top-bar p {
+  font-size: 16px;
+  font-weight: 550;
 }
 
 .header {
@@ -308,12 +332,19 @@ onMounted(async () => {
 .balance-info-top {
   font-size: 20px;
   font-weight: bolder;
+
+  line-height: 1;
 }
 
 .jetton-icon {
   width: 60px;
   height: 60px;
   border-radius: 50%;
+}
+
+.back-button img {
+  width: 18px;
+  height: 22px;
 }
 
 .actions {
@@ -339,6 +370,10 @@ onMounted(async () => {
 
 .price-info p {
   font-size: 12px;
+}
+
+.price-info h4 {
+  font-weight: bold;
 }
 
 .chart {
@@ -370,8 +405,14 @@ onMounted(async () => {
 
 .left-info {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex-grow: 1;
+  gap: 10px;
+}
+
+.left-info img {
+  width: 25px;
+  height: 25px;
 }
 
 .right-info {
@@ -392,7 +433,8 @@ onMounted(async () => {
   border: none;
   color: #fff;
   padding: 10px 15px;
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
   transition:
     background 0.3s,

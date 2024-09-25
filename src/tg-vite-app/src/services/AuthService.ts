@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE_URL = 'https://localhost:7206/api'
+const BASE_URL = '/api'
 
 export default class AuthService {
   async login(userId: number, walletAddress: any, username: string): Promise<void> {
@@ -26,6 +26,7 @@ export default class AuthService {
   async checkUserExists(userId: number): Promise<boolean> {
     try {
       const response = await axios.get(`${BASE_URL}/users/exists?id=${userId}`)
+      console.log(response.data)
       return response.data
     } catch (error) {
       console.error(error)
@@ -47,11 +48,11 @@ export default class AuthService {
 export class UserDto {
   id: number
   username: string
-  rawWalletAddress: string
+  walletAddress: string
 
-  constructor(id: number, username: string, rawWalletAddress: string) {
+  constructor(id: number, username: string, walletAddress: string) {
     this.id = id
     this.username = username
-    this.rawWalletAddress = rawWalletAddress
+    this.walletAddress = walletAddress
   }
 }
