@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TonWalletApi.Dtos;
 using TonWalletApi.Services;
 
@@ -10,61 +12,73 @@ namespace TonWalletApi.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IAuthService _authService;
-        private readonly ITonService _tonService;
-        public UsersController(IAuthService authService, ITonService tonService) 
+
+        public UsersController(IAuthService authService)
         {
             _authService = authService;
-            _tonService = tonService;
         }
 
+        // POST: api/users/login
         [HttpPost("login")]
         public async Task<IActionResult> LoginAsync([FromBody] UserDto userDto)
         {
-            await _authService.LoginAsync(userDto);
-
-            return Ok("Logined successfully");
+            var token = await _authService.LoginAsync(userDto);
+            return Ok(token);
         }
 
-        [HttpGet("exists")]
-        public async Task<IActionResult> IsIserExistAsync(int id)
+        // POST: api/users/logout
+        [HttpPost("{id:int}/logout")]
+        [Authorize]
+        public async Task<IActionResult> LogoutAsync(int id)
+        {
+            var userIdFromToken = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdFromToken != id.ToString())
+            {
+                return Forbid("You can only log out your own account.");
+            }
+
+            await _authService.LogoutAsync(id);
+            return Ok(new { message = "Logged out successfully" });
+        }
+
+        // GET: api/users/exists/{id}
+        [HttpGet("exists/{id:int}")]
+        public async Task<IActionResult> IsUserExistAsync(int id)
         {
             var exists = await _authService.IsUserExist(id);
-            return Ok(exists);
+            return Ok(new { exists });
         }
 
-        [HttpGet]
+        // POST: api/users/refresh
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshTokenAsync([FromBody] TokenDto tokenDto)
+        {
+            var authResult = await _authService.RefreshTokenAsync(tokenDto);
+            if (authResult == null)
+            {
+                return Unauthorized(new { message = "Invalid refresh token." });
+            }
+            return Ok(authResult);
+        }
+
+        // GET: api/users/{id}
+        [HttpGet("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> GetUserAsync(int id)
         {
+            var userIdFromToken = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdFromToken != id.ToString())
+            {
+                return Forbid("You can only access your own profile.");
+            }
+
             var user = await _authService.GetUserAsync(id);
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found" });
+            }
+
             return Ok(user);
-        }
-
-        [HttpGet("jettons")]
-        public async Task<IActionResult> GetJettonstAsync(int userId)
-        {
-            var user = await _tonService.GetJettonsAsync(userId);
-            return Ok(user);
-        }
-
-        [HttpGet("tonHistory")]
-        public async Task<IActionResult> GetTonHistoryAsync(int userId)
-        {
-            var history = await _tonService.GetTonHistoryAsync(userId);
-            return Ok(history);
-        }
-
-        [HttpGet("jettonHistory")]
-        public async Task<IActionResult> GetJettonHistoryAsync(int userId, string jettonAddress)
-        {
-            var history = await _tonService.GetJettonHistoryAsync(userId, jettonAddress);
-            return Ok(history);
-        }
-
-        [HttpGet("jettonChart")]
-        public async Task<IActionResult> GetJettonChartAsync(string jettonAddress, long startDate)
-        {
-            var chart = await _tonService.GetJettonChartAsync(jettonAddress, startDate);
-            return Ok(chart);
         }
     }
 }

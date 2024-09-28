@@ -14,5 +14,6 @@ namespace TonWallet.Domain.Repositories
         Task CreateUser(User user);
         Task UpdateUserWalletAddress(User user);
         Task<string> GetUserWalletAddress(int userId);
+        Task DeleteUser(int id);
     }
 }

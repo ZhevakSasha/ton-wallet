@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TonWallet.Domain", "TonWall
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TonWallet.Infrastructure", "TonWallet.Infrastructure\TonWallet.Infrastructure.csproj", "{7F93F930-C5D9-4E04-997F-ABB62ECB66C9}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{D0A7F0F8-1817-43BC-8CE9-5AC90DE02F97}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{7F93F930-C5D9-4E04-997F-ABB62ECB66C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F93F930-C5D9-4E04-997F-ABB62ECB66C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F93F930-C5D9-4E04-997F-ABB62ECB66C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0A7F0F8-1817-43BC-8CE9-5AC90DE02F97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0A7F0F8-1817-43BC-8CE9-5AC90DE02F97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0A7F0F8-1817-43BC-8CE9-5AC90DE02F97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0A7F0F8-1817-43BC-8CE9-5AC90DE02F97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
