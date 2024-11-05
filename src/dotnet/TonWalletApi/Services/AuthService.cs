@@ -94,6 +94,7 @@ namespace TonWalletApi.Services
             var newRefreshToken = _jwtService.GenerateRefreshToken();
 
             // Save new refresh token in Redis
+            await _cacheService.RemoveCacheAsync(userId.ToString());
             await _cacheService.SetCacheAsync(userId.ToString(), newRefreshToken, TimeSpan.FromDays(15));
 
             return new AuthResult

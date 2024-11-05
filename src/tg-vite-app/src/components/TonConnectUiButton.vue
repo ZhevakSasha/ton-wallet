@@ -31,7 +31,6 @@ const isConnected = computed(() => tonConnectStore.tonConnectUI?.connected)
 const openConnectModal = async () => {
   tonConnectStore.openModal()
   isModalOpen.value = true
-  console.log(isConnected.value)
 }
 
 const copyAddress = async () => {
@@ -45,7 +44,7 @@ const copyAddress = async () => {
 
 const disconnect = async () => {
   if (userId.value) {
-    await tonConnectStore.disconnect(userId.value)
+    await tonConnectStore.disconnect()
     router.push({ name: 'welcome' })
   }
 }
@@ -59,10 +58,6 @@ onMounted(async () => {
     const tg = window.Telegram.WebApp
     const user = tg.initDataUnsafe.user
     userId.value = user.id
-    if (await authService.checkUserExists(user.id)) {
-      router.push({ name: 'home', query: { userId: user.id } })
-      return
-    }
     if (tonConnectStore.tonConnectUI) {
       tonConnectStore.tonConnectUI.onStatusChange(async (walletAndwalletInfo) => {
         try {

@@ -197,9 +197,9 @@ const disconnect = async () => {
 }
 
 onMounted(async () => {
-  user.value = await authService.getUserById(Number(userId))
+  user.value = await authService.getUserById()
   if (user.value) {
-    jettons.value = await tonService.getJettons(Number(userId))
+    jettons.value = await tonService.getJettons()
     const targetBalance = parseFloat(calculateBalance())
     animateBalance(targetBalance)
   }

@@ -62,17 +62,17 @@ namespace TonWalletApi.Controllers
         }
 
         // GET: api/users/{id}
-        [HttpGet("{id:int}")]
+        [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetUserAsync(int id)
+        public async Task<IActionResult> GetUserAsync()
         {
             var userIdFromToken = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userIdFromToken != id.ToString())
+            if (userIdFromToken == null)
             {
                 return Forbid("You can only access your own profile.");
             }
 
-            var user = await _authService.GetUserAsync(id);
+            var user = await _authService.GetUserAsync(int.Parse(userIdFromToken));
             if (user == null)
             {
                 return NotFound(new { message = "User not found" });

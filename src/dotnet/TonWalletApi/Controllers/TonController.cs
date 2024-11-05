@@ -47,7 +47,7 @@ namespace TonWalletApi.Controllers
         }
 
         // GET: api/ton/jettonHistory/{jettonAddress}
-        [HttpGet("jettonHistory/{jettonAddress}")]
+        [HttpGet("jettonHistory")]
         public async Task<IActionResult> GetJettonHistoryAsync(string jettonAddress)
         {
             var userIdFromToken = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -61,7 +61,7 @@ namespace TonWalletApi.Controllers
         }
 
         // GET: api/ton/jettonChart/{jettonAddress}?startDate={startDate}
-        [HttpGet("jettonChart/{jettonAddress}")]
+        [HttpGet("jettonChart")]
         public async Task<IActionResult> GetJettonChartAsync(string jettonAddress, long startDate)
         {
             var chart = await _tonService.GetJettonChartAsync(jettonAddress, startDate);
