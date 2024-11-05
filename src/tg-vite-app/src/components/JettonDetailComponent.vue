@@ -227,7 +227,7 @@ const jetton = computed(() => jettonStore.selectedJetton)
 
 onMounted(async () => {
   if (jettonStore.selectedJetton?.jetton.symbol == 'TON') {
-    jettonHistory.value = await tonService.getTonHistory(userId)
+    jettonHistory.value = await tonService.getTonHistory()
     points.value = await tonService.getJettonChart(
       'ton',
       Math.floor((new Date().getTime() - 24 * 60 * 60 * 1000) / 1000)
@@ -239,7 +239,7 @@ onMounted(async () => {
 
   const walletAddress = jettonStore.selectedJetton?.jetton.address
   if (walletAddress) {
-    jettonHistory.value = await tonService.getJettonHistory(userId, walletAddress)
+    jettonHistory.value = await tonService.getJettonHistory(walletAddress)
     points.value = await tonService.getJettonChart(
       walletAddress,
       Math.floor((new Date().getTime() - 24 * 60 * 60 * 1000) / 1000)

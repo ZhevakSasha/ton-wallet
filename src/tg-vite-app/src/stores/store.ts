@@ -38,10 +38,8 @@ export const useTonConnectStore = defineStore('tonConnect', {
       await this.tonConnectUI?.openModal()
       await this.tonConnectUI?.disconnect()
     },
-    async disconnect(userId: number) {
-      const authService = new AuthService()
+    async disconnect() {
       await this.tonConnectUI?.disconnect()
-      await authService.logout(userId)
     },
     async sendTransaction(toAddress: string, amount: string) {
       try {

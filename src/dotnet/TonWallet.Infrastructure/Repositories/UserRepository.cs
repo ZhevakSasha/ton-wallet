@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,13 +26,17 @@ namespace TonWallet.Infrastructure.Repositories
 
         public async Task<string> GetUserWalletAddress(int userId)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            return user.RAWWalletAddress;
+            var user = await _dbContext.Users
+                .Include(u => u.WalletAddresses)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            return user.WalletAddresses.RawForm;
         }
 
         public async Task<User> GetUserById(int id)
         {
-            return await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            return await _dbContext.Users
+                .Include(u => u.WalletAddresses)
+                .FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task<bool> IsUserExist(int id)
@@ -41,9 +46,18 @@ namespace TonWallet.Infrastructure.Repositories
 
         public async Task UpdateUserWalletAddress(User user)
         {
-            var entity = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
-            entity.RAWWalletAddress = user.RAWWalletAddress;
+            var entity = await _dbContext.Users
+                .Include(u => u.WalletAddresses)
+                .FirstOrDefaultAsync(u => u.Id == user.Id);
+            entity.WalletAddresses.RawForm = user.WalletAddresses.RawForm;
             _dbContext.Update(entity);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteUser(int id)
+        {
+            var entity = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            _dbContext.Remove(entity);
             await _dbContext.SaveChangesAsync();
         }
     }

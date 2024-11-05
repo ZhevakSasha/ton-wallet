@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  tonwalletapi:
+    image: ${DOCKER_REGISTRY-}tonwalletapi
+    build:
+      context: .
+      dockerfile: TonWalletApi/Dockerfile

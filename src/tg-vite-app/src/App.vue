@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-</script>
-
 <template>
   <div class="wrapper">
     <router-view v-slot="{ Component }">
@@ -11,6 +7,28 @@ import { RouterLink, RouterView } from 'vue-router'
     </router-view>
   </div>
 </template>
+
+<script setup lang="ts">
+import { onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { eventBus } from './services/eventBus'
+import { useTonConnectStore } from '@/stores/store'
+import { RouterLink, RouterView } from 'vue-router'
+
+const router = useRouter()
+const store = useTonConnectStore()
+
+const handleAuthError = () => {
+  localStorage.removeItem('accessToken')
+  localStorage.removeItem('refreshToken')
+  store.disconnect()
+  router.push({ name: 'welcome' })
+}
+
+onMounted(() => {
+  eventBus.on('authError', handleAuthError)
+})
+</script>
 
 <style>
 .slide-right-enter-active,

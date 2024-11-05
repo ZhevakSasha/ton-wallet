@@ -4,6 +4,6 @@
     {
         public int Id { get; set; }
         public string Username { get; set; }
-        public string RAWWalletAddress { get; set; }
+        public string WalletAddress { get; set; }
     }
 }
