@@ -41,9 +41,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseNpgsql(connectionString));
 
 
+var redisConnection = builder.Configuration.GetConnectionString("RedisCacheUrl");
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = "localhost:6379";
+    options.Configuration = redisConnection;
     options.InstanceName = "TonWallet";
 });
 

@@ -24,7 +24,6 @@ namespace TonWalletApi.Services
             _userRepository = userRepository;
         }
 
-        [Authorize]
         public async Task<List<Balance>> GetJettonsAsync(int userId)
         {
             var walletAddress =  await _userRepository.GetUserWalletAddress(userId);

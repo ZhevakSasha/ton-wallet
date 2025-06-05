@@ -64,6 +64,7 @@ namespace TonWalletApi.Services
 
         public async Task LogoutAsync(int id)
         {
+            await _cacheService.RemoveCacheAsync(id.ToString());
             await _userRepository.DeleteUser(id);
         }
 
